@@ -1,0 +1,45 @@
+@import "tailwindcss";
+.perspective {
+  perspective: 1500px;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-0 {
+  transform: rotateY(0deg);
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.auth-input {
+  width: 100%;
+  padding-left: 1rem;  
+  padding-right: 1rem;
+  padding-top: 0.5rem; 
+  padding-bottom: 0.5rem;
+  border: 1px solid #D1D5DB; 
+  border-radius: 0.375rem;
+  font-size: 0.875rem; 
+  background-color: white;
+  transition: outline-color 0.3s ease, box-shadow 0.3s ease;
+  color: black;
+  
+}
+
+.auth-input::placeholder {
+  font-size: 0.75rem; 
+  color: #9CA3AF; 
+}
+
+.auth-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #FCA5A5;
+  border-color: #F87171;
+}
+body{
+  background-color: #ffe6e6;
+}
