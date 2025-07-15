@@ -34,7 +34,7 @@ function Menu() {
             animate={{ scale: 1, rotate: 0, opacity: 1 }}
             exit={{ scale: 0, rotate: 45, opacity: 0 }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
-            className="fixed top-0 right-0 w-[45%] h-[570px] bg-white backdrop-blur-md text-white rounded-bl-[300px] shadow-2xl z-[999] flex flex-col justify-center items-center gap-8 px-6"
+            className="fixed top-0 right-0 w-[45%] h-[585px] bg-white backdrop-blur-md text-white rounded-bl-[300px] shadow-2xl z-[999] flex flex-col justify-center items-center gap-8 px-6"
             style={{ transformOrigin: "top right", fontSize: "18px" }}
           >
             {links.map((item) => (
@@ -50,7 +50,7 @@ function Menu() {
              <div
             className="flex items-center gap-1 cursor-pointer text-red-500"
           >
-            <span>📞 123 456 789</span>
+            <span>📞123456789</span>
           </div> 
 
             <Link href="/cart" onClick={() => setOpen(false)}>

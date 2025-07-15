@@ -11,9 +11,9 @@ export default function Order() {
   const [pickupTime, setPickupTime] = useState("upTo30");
   const [scheduleHour, setScheduleHour] = useState("");
   return (
-    <section className="py-20 text-center px-6 md:px-24 flex text-left">
+    <section className="py-20 text-center px-6 md:px-24 flex flex-col text-left">
       <div>
-        <h2 className="text-5xl font-semibold mb-4">ORDER ONLINE</h2>
+        <h2 className="text-4xl md:text-5xl font-semibold mb-4">ORDER ONLINE</h2>
         <p className={`${merienda.className} text-md text-gray-700`}>
           Ready for a bite that blows your mind ? We’ve got just the thing
         </p>
@@ -35,14 +35,14 @@ export default function Order() {
                     ? "bg-red-500 text-white "
                     : "bg-white text-gray-700 hover:bg-red-200"
                 }`}
-            >
+            >    
               {type === "pickup" ? "Pickup" : "Delivery"}
             </button>
           ))}
         </div>
         {method === "pickup" ? (
-          <div className="flex flex-col gap-1 justify-around mt-2 [@media(min-width:649px)]:gap-6 [@media(min-width:649px)]:flex-row">
-            <h4 className="flex items-center gap-1">
+            <div className="flex flex-col mt-2 gap-3 md:gap-6 md:flex-row items-start md:items-center w-full">
+            <h4 className="flex items-center gap-1 w-fit">
               <Image src="/time.png" alt="" width={17} height={17} />
               Pickup time :{" "}
               {pickupTime === "upTo30"

@@ -14,9 +14,9 @@ function Featured() {
   const [activeTab, setActiveTab] = useState("choices");
 
   return (
-    <div className="w-screen text-gray-800 py-8">
-      <div className=" top-[70px] w-[90%] mx-auto z-10 py-4  md:px-6 flex items-center justify-between">
-        <div className="flex items-center gap-6 text-lg md:text-xl font-semibold text-red-600">
+    <div className="w-screen text-gray-800 pb-8 ">
+      <div className=" w-[90%] mx-auto z-10  md:px-6 flex items-center justify-between">
+        <div className="flex items-center gap-3 md:gap-6 text-lg md:text-xl font-semibold text-red-600">
           <button
             onClick={() => setActiveTab("choices")}
             className="relative focus:outline-none"
@@ -43,7 +43,7 @@ function Featured() {
           className="bg-red-500 text-white px-4 py-1 rounded-full hover:bg-red-600 transition text-sm"
           title="Go to cart"
         >
-          View Cart( {cartCount} )
+          View Cart ( {cartCount} )
         </Link>
       </div>
 
