@@ -1,4 +1,3 @@
-
 import { pizzas, burgers, italians } from "@/data";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +9,7 @@ const dataMap = {
   italians,
 };
 
-const CategoryPage = ({ params }) => {
+async function CategoryPage({ params }) {
   const { category } = params;
   const items = dataMap[category];
 
@@ -31,15 +30,14 @@ const CategoryPage = ({ params }) => {
             className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 group"
           >
             <div className="relative w-full h-64 bg-white flex items-center justify-center">
-  <Image
-    src={item.img}
-    alt={item.title}
-    width={250}
-    height={250}
-    className="object-contain"
-  />
-</div>
-
+              <Image
+                src={item.img}
+                alt={item.title}
+                width={250}
+                height={250}
+                className="object-contain"
+              />
+            </div>
 
             <div className="p-5 flex flex-col gap-2">
               <h2 className="text-lg font-bold text-gray-800 uppercase">
@@ -50,8 +48,12 @@ const CategoryPage = ({ params }) => {
                   {item.price}$
                 </span>
                 <Link
-                 href={`/product/${item.id}`}
-                  className="opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-in-out bg-red-500 text-white text-xs px-3 py-1 rounded-md "
+                  href={`/product/${item.id}`}
+                  className="
+                    opacity-100 md:opacity-0 md:translate-y-3 md:group-hover:opacity-100 md:group-hover:translate-y-0
+                    transition-all duration-300 ease-in-out
+                    bg-red-500 text-white text-xs px-3 py-1 rounded-md
+                  "
                 >
                   Explore
                 </Link>

@@ -4,21 +4,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { ibmPlexSans } from "../fonts/font";
 
+import slide1 from "../../src/assets/slide1.jpg";
+import slide2 from "../../src/assets/slide2.jpg";
+import slide3 from "../../src/assets/slide3.png";
+
 const data = [
   {
     id: 1,
     title: "always fresh & always crispy & always hot",
-    image: "/slide1.jpg",
+    image: slide1,
   },
   {
     id: 2,
     title: "we deliver your order wherever you are in NY",
-    image: "/slide2.jpg",
+    image: slide2,
   },
   {
     id: 3,
     title: "the best pizza to share with your family",
-    image: "/slide3.png",
+    image: slide3,
   },
 ];
 
@@ -38,13 +42,13 @@ function Slide() {
         <h1
           className={
             ibmPlexSans.className +
-            " text-4xl text-center uppercase p-4 md:p-10 md:text-6xl xl:text-7xl"
+            " text-4xl text-center uppercase p-4 md:p-10 md:text-5xl lg:text-6xl xl:text-7xl transition-all duration-500 ease-in-out"
           }
         >
           {data[currentSlide].title}
         </h1>
         <Link
-          className="bg-red-500 text-white rounded-md py-3 px-6"
+          className="bg-red-500 text-white rounded-md py-3 px-6 transition-all duration-500 ease-in-out"
           href="/menu"
         >
           Order Now
@@ -55,7 +59,8 @@ function Slide() {
           src={data[currentSlide].image}
           alt="Slide Image"
           fill
-          className="object-cover"
+          placeholder="blur"
+          className="object-cover transition-all duration-500 ease-in-out"
         />
       </div>
     </div>

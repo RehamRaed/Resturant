@@ -106,26 +106,28 @@ export default function ProductPage() {
         <p>{product.desc}</p>
 
         {product.options?.length > 0 && (
-          <div>
-            <label className="font-semibold">Choose Size:</label>
-            <div className="flex gap-3 md:gap-4 flex-wrap mt-2">
-              {product.options.map((opt) => (
-                <button
-                  key={opt.title}
-                  onClick={() => setSelectedOption(opt.title)}
-                  className={`w-[7rem] md:w-[8.5rem] py-1.5 rounded-lg font-medium border transition-all duration-300 ${
-                    selectedOption === opt.title
-                      ? "bg-red-500 text-white border-red-500 shadow-md scale-105"
-                      : "bg-white text-red-500 border-red-300 hover:bg-red-100 hover:border-red-400"
-                  }`}
-                >
-                  {opt.title}{" "}
-                  {opt.additionalPrice > 0 ? `(+${opt.additionalPrice}$)` : ""}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+  <div>
+    <label className="font-semibold">Choose Size:</label>
+    <div className="flex gap-3 max-[392px]:gap-2 md:gap-4 flex-wrap mt-2 transition-all duration-300 ">
+      {product.options.map((opt) => (
+        <button
+          key={opt.title}
+          onClick={() => setSelectedOption(opt.title)}
+          className={`w-[7rem] max-[392px]:w-[6.3rem] md:w-[8.5rem] py-1.5 rounded-lg font-medium border transition-all duration-300           
+            ${
+              selectedOption === opt.title
+                ? "bg-red-500 text-white border-red-500 shadow-md scale-105"
+                : "bg-white text-red-500 border-red-300 hover:bg-red-100 hover:border-red-400"
+            }
+          `}
+        >
+          {opt.title} {opt.additionalPrice > 0 ? `+${opt.additionalPrice}$` : ""}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
 
         <div className="flex gap-2">
           <span className="text-lg font-semibold text-gray-700">

@@ -28,7 +28,7 @@ function CartPage() {
                   <h2 className="-semibold text-lg md:text-xl text-gray-800 mb-1">
                     {item.title}{" "}
                     {item.option && (
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-500 ">
                         ({item.option})
                       </span>
                     )}
