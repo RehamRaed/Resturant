@@ -11,20 +11,21 @@ import slide3 from "../../src/assets/slide3.png";
 const data = [
   {
     id: 1,
-    title: "always fresh & always crispy & always hot",
+    title: "every bite brings a smile and fills you with joy",
     image: slide1,
   },
   {
     id: 2,
-    title: "we deliver your order wherever you are in NY",
+    title: "great moments happen when we share good food",
     image: slide2,
   },
   {
     id: 3,
-    title: "the best pizza to share with your family",
+    title: "made with care, baked to pure perfection",
     image: slide3,
   },
 ];
+
 
 function Slide() {
   const [currentSlide, setCurrentSlide] = useState(0);

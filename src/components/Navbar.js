@@ -12,7 +12,7 @@ function Navbar() {
           <Link href="/contact">Contact</Link>
         </div>
         <div className="-ml-4 md:ml-0 text-xl font-bold flex-1 md:text-center">
-          <Link href="/">Massimo</Link>
+          <Link href="/">Tavolo</Link>
         </div>
         <div className="md:hidden">
             <Menu />
