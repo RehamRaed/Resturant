@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { auth } from "../../../firebase/firebaseConfig";
+import { useRouter } from "next/navigation";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -9,20 +10,45 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+const signupSchema = z
+  .object({
+    fullName: z.string().min(3, "Full name is required"),
+    phone: z.string().optional(),
+    address: z.string().optional(),
+    email: z.string().email("Invalid email"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Confirm password is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
 
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    phone: "",
-    address: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    getValues,
+  } = useForm({
+    resolver: zodResolver(isLogin ? loginSchema : signupSchema),
+  });
 
   const handleGoogleSignIn = async () => {
     setError("");
@@ -40,33 +66,23 @@ const LoginPage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setError("");
     setMessage("");
     setLoading(true);
-    const { email, password, confirmPassword } = formData;
-
-    if (!email || !password) {
-      setError("Please fill email and password");
-      setLoading(false);
-      return;
-    }
-
-    if (!isLogin && password !== confirmPassword) {
-      setError("Passwords do not match");
-      setLoading(false);
-      return;
-    }
-
     try {
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, data.email, data.password);
         setMessage("Logged in successfully!");
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, data.email, data.password);
         setMessage("Account created successfully!");
       }
+      reset();
+
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -77,13 +93,14 @@ const LoginPage = () => {
   const handleResetPassword = async () => {
     setError("");
     setMessage("");
-    if (!formData.email) {
+    const emailValue = getValues("email");
+    if (!emailValue) {
       setError("Please enter your email to reset password.");
       return;
     }
     try {
       setLoading(true);
-      await sendPasswordResetEmail(auth, formData.email);
+      await sendPasswordResetEmail(auth, emailValue);
       setMessage("Password reset email sent! Check your inbox.");
     } catch (err) {
       setError(err.message);
@@ -95,7 +112,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10 mt-[101px] md:mt-[128px]">
       <div
-        className="w-full max-w-md h-[600px] perspective"
+        className="w-full max-w-md h-[600px]"
         style={{ perspective: "1500px" }}
       >
         <div
@@ -105,75 +122,91 @@ const LoginPage = () => {
           style={{ transformStyle: "preserve-3d" }}
         >
           <div
-            className="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-2xl p-10 flex flex-col justify-center"
+            className="absolute w-full h-full bg-white rounded-2xl shadow-2xl p-10 flex flex-col justify-center"
             style={{ backfaceVisibility: "hidden" }}
           >
-            <h2 className="text-3xl font-bold text-red-600 mb-6 ">Login</h2>
-
+            <h2 className="text-3xl font-bold text-red-600 mb-1">Login</h2>
+            <div className="mb-1 text-sm h-6">
+              {error && <p className="text-red-600">{error}</p>}
+              {message && <p className="text-green-600">{message}</p>}
+            </div>
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
               className="bg-gray-200 font-semibold hover:bg-gray-300 py-4 rounded-lg transition disabled:opacity-50 mb-4 flex items-center justify-center gap-2"
             >
-              <Image src="/google.png" alt="Google icon" width={20} height={20} />
+              <Image
+                src="/google.png"
+                alt="Google icon"
+                width={20}
+                height={20}
+              />
               Continue with Google
             </button>
-
-            <div className="flex items-center mt-4 mb-2">
+            <div className="flex items-center mt-1 mb-4">
               <hr className="flex-grow border-gray-300" />
               <span className="mx-4 text-gray-500 text-sm">or</span>
               <hr className="flex-grow border-gray-300" />
             </div>
-
-            <div className="min-h-[1.5rem]">
-              {error && <p className="text-red-600 text-sm">{error}</p>}
-              {message && <p className="text-green-600 text-sm">{message}</p>}
-            </div>
-
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-              <input
-                type="email"
-                placeholder="Email"
-                className="auth-input"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                required
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                className="auth-input"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                required
-              />
-              <div className="flex justify-between text-sm text-gray-500 mt-1">
-                <label className="flex gap-2 items-center">
-                  <input type="checkbox" />
-                  Remember me
-                </label>
-                <button
-                  className="text-red-500 hover:underline"
-                  type="button"
-                  onClick={handleResetPassword}
-                  disabled={loading}
-                >
-                  Forgot Password?
-                </button>
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg mt-2 transition disabled:opacity-50"
+            <div className="relative flex">
+              <form
+                className="flex flex-col gap-4 w-full"
+                onSubmit={handleSubmit(onSubmit)}
               >
-                Login
-              </button>
-            </form>
-
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    className="auth-input"
+                    {...register("email")}
+                  />
+                  <div className="h-2">
+                    {errors.email && (
+                      <p className="text-red-400 text-xs text-right">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>{" "}
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className="auth-input"
+                    {...register("password")}
+                  />
+                  <div className="h-2">
+                    {" "}
+                    {errors.password && (
+                      <p className="text-red-400 text-xs text-right">
+                        {errors.password.message}
+                      </p>
+                    )}
+                  </div>{" "}
+                </div>
+                <div className="flex justify-between text-sm text-gray-500 mt-1">
+                  <label className="flex gap-2 items-center">
+                    <input type="checkbox" />
+                    Remember me
+                  </label>
+                  <button
+                    className="text-red-500 hover:underline"
+                    type="button"
+                    onClick={handleResetPassword}
+                    disabled={loading}
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg mt-2 transition disabled:opacity-50"
+                >
+                  Login
+                </button>
+              </form>
+            </div>
             <div className="text-sm text-gray-600 mt-6">
               Don&apos;t have an account?{" "}
               <button
@@ -181,6 +214,7 @@ const LoginPage = () => {
                   setIsLogin(false);
                   setError("");
                   setMessage("");
+                  reset();
                 }}
                 className="text-red-500 underline cursor-pointer"
               >
@@ -188,86 +222,106 @@ const LoginPage = () => {
               </button>
             </div>
           </div>
-
           <div
-            className="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-2xl p-10 flex flex-col justify-center"
+            className="absolute w-full h-full bg-white rounded-2xl shadow-2xl p-10 flex flex-col justify-center"
             style={{
               backfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
             }}
           >
-            <h2 className="text-3xl font-bold text-red-600 mb-6">
+            <h2 className="text-3xl font-bold text-red-600 mb-1">
               Create Account
             </h2>
-            {error && <p className="text-red-600 mb-2">{error}</p>}
-            {message && <p className="text-green-600 mb-2">{message}</p>}
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Full Name"
-                className="auth-input"
-                value={formData.fullName}
-                onChange={(e) =>
-                  setFormData({ ...formData, fullName: e.target.value })
-                }
-                required
-              />
-              <input
-                type="text"
-                placeholder="Phone Number"
-                className="auth-input"
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Delivery Address"
-                className="auth-input"
-                value={formData.address}
-                onChange={(e) =>
-                  setFormData({ ...formData, address: e.target.value })
-                }
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                className="auth-input"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                required
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                className="auth-input"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                required
-              />
-              <input
-                type="password"
-                placeholder="Confirm Password"
-                className="auth-input"
-                value={formData.confirmPassword}
-                onChange={(e) =>
-                  setFormData({ ...formData, confirmPassword: e.target.value })
-                }
-                required
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg mt-4 transition disabled:opacity-50"
+            <div className="mb-1 text-sm h-6">
+              {error && <p className="text-red-600">{error}</p>}
+              {message && <p className="text-green-600">{message}</p>}
+            </div>
+            <div className="relative flex">
+              <form
+                className="flex flex-col gap-4 w-full"
+                onSubmit={handleSubmit(onSubmit)}
               >
-                Sign Up
-              </button>
-            </form>
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    className="auth-input"
+                    {...register("fullName")}
+                  />
+                  <div className="h-2">
+                    {errors.fullName && (
+                      <p className="text-red-400 text-xs text-right">
+                        {errors.fullName.message}
+                      </p>
+                    )}
+                  </div>{" "}
+                </div>
+                <input
+                  type="text"
+                  placeholder="Phone Number"
+                  className="auth-input"
+                  {...register("phone")}
+                />
+                <input
+                  type="text"
+                  placeholder="Delivery Address"
+                  className="auth-input"
+                  {...register("address")}
+                />
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    className="auth-input"
+                    {...register("email")}
+                  />
+                  <div className="h-2">
+                    {errors.email && (
+                      <p className="text-red-400 text-xs text-right">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>{" "}
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className="auth-input"
+                    {...register("password")}
+                  />
+                  <div className="h-2">
+                    {errors.password && (
+                      <p className="text-red-400 text-xs text-right">
+                        {errors.password.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="auth-input"
+                    {...register("confirmPassword")}
+                  />
+                  <div className="h-2">
+                    {errors.confirmPassword && (
+                      <p className="text-red-400 text-xs text-right">
+                        {errors.confirmPassword.message}
+                      </p>
+                    )}
+                  </div>{" "}
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 mt-2 rounded-lg transition disabled:opacity-50"
+                >
+                  Sign Up
+                </button>
+              </form>
+            </div>
             <div className="text-sm text-gray-600 mt-6">
               Already have an account?{" "}
               <button
@@ -275,6 +329,7 @@ const LoginPage = () => {
                   setIsLogin(true);
                   setError("");
                   setMessage("");
+                  reset();
                 }}
                 className="text-red-500 underline cursor-pointer"
               >

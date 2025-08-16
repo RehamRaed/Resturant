@@ -23,7 +23,6 @@ export default function ProductPage() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  // جلب المنتج
   useEffect(() => {
     if (!id) return;
 
@@ -68,7 +67,6 @@ export default function ProductPage() {
       </p>
     );
 
-  // حساب السعر مع الخيار
   const getPriceWithOption = () => {
     if (!selectedOption || !product.options) return product.price;
 
